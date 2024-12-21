@@ -59,20 +59,20 @@ df_lab = pd.read_csv(file_labels)
 
 
 # Repartition des statuts maritaux
-values, counts = np.unique(df_feat['MAR'],return_counts=True)
-plt.bar(values, counts, align='center', alpha=0.7, color='skyblue', edgecolor='black')
-plt.title("Class of marital status Distribution")
-plt.xlabel("Class of marital status Ranges")
-plt.ylabel("Frequency")
-plt.show()
-
-# Répartition des niveaux d'éducation
-# values, counts = np.unique(df_feat['SCHL'],return_counts=True)
+# values, counts = np.unique(df_feat['MAR'],return_counts=True)
 # plt.bar(values, counts, align='center', alpha=0.7, color='skyblue', edgecolor='black')
-# plt.title("Class of educational attainment Distribution")
-# plt.xlabel("Class of educational attainment Ranges")
+# plt.title("Class of marital status Distribution")
+# plt.xlabel("Class of marital status Ranges")
 # plt.ylabel("Frequency")
 # plt.show()
+
+# Répartition des niveaux d'éducation
+values, counts = np.unique(df_feat['SCHL'],return_counts=True)
+plt.bar(values, counts, align='center', alpha=0.7, color='skyblue', edgecolor='black')
+plt.title("Class of educational attainment Distribution")
+plt.xlabel("Class of educational attainment Ranges")
+plt.ylabel("Frequency")
+plt.show()
 
 
 # SPLIT TRAIN TEST part
