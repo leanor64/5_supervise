@@ -134,28 +134,82 @@ labels = df_lab['PINCP'].map({'True':1.0, 'False':0.0})
 
 # TODO : Une méthode de Stacking
 
-rf=joblib.load('RandomForest_BestModel_08166.joblib')
-ab=joblib.load('AdaBoost_BestModel_08151.joblib')
-gb=joblib.load('GradientBoosting_BestModel_08119.joblib')
+# rf=joblib.load('RandomForest_BestModel_08166.joblib')
+# ab=joblib.load('AdaBoost_BestModel_08151.joblib')
+# gb=joblib.load('GradientBoosting_BestModel_08119.joblib')
 
-estimators = [('rf', rf),('ab', ab), ('gb', gb)]
-sc = StackingClassifier(estimators)
-sc.fit(X_train_scaled,y_train)
-cv_score = cross_val_score(sc, X_train_scaled, y_train, cv=5)
-y_pred=sc.predict(X_test_scaled)
+# estimators = [('rf', rf),('ab', ab), ('gb', gb)]
+# sc = StackingClassifier(estimators)
+# sc.fit(X_train_scaled,y_train)
+# cv_score = cross_val_score(sc, X_train_scaled, y_train, cv=5)
+# y_pred=sc.predict(X_test_scaled)
 
-print(f"\nCross-Validation score optimal Stacking : {np.mean(cv_score)}")
-accuracy = accuracy_score(y_test,y_pred)
-print(f"Accuracy optimal Stacking : {accuracy}")
-creport = classification_report(y_test,y_pred)
-print(f"Classification optimal Stacking :\n {creport}")
-matrix=confusion_matrix(y_test,y_pred)
-disp = ConfusionMatrixDisplay(confusion_matrix=matrix)
-disp.plot()
-plt.title("Confusion matrix for our optimal Stacking")
-plt.show()
+# print(f"\nCross-Validation score optimal Stacking : {np.mean(cv_score)}")
+# accuracy = accuracy_score(y_test,y_pred)
+# print(f"Accuracy optimal Stacking : {accuracy}")
+# creport = classification_report(y_test,y_pred)
+# print(f"Classification optimal Stacking :\n {creport}")
+# matrix=confusion_matrix(y_test,y_pred)
+# disp = ConfusionMatrixDisplay(confusion_matrix=matrix)
+# disp.plot()
+# plt.title("Confusion matrix for our optimal Stacking")
+# plt.show()
 
 # TODO : penser à renommer le fichier joblib
-joblib.dump(sc,'Stacking_BestModel_.joblib')
+# joblib.dump(sc,'Stacking_BestModel_.joblib')
 
 # TODO : Temps d'exécution pour Stacking
+
+
+
+
+# EQUITE
+
+# Taux d'individu >= 50000$
+taux_1_y_train = (y_train == 1).mean()
+print(f"Taux de valeurs '1' dans y_train : {taux_1_y_train}")
+
+taux_0_y_train = (y_train == 0).mean()
+print(f"Taux de valeurs '0' dans y_train : {taux_0_y_train}")
+
+
+# Taux d'homme >= 50000$
+X_train['PINCP'] = y_train['PINCP']
+hommes_X_train = X_train[X_train['SEX'] == 1]
+taux_hommes_label_1 = (hommes_X_train['PINCP'] == 1).mean()
+print(f"Taux d'hommes ayant le label '1' : {taux_hommes_label_1}")
+
+
+# Taux de femmes >= 50000$
+
+femmes_X_train = X_train[X_train['SEX'] == 2]
+taux_femmes_label_1 = (femmes_X_train['PINCP'] == 1).mean()
+print(f"Taux de femmes ayant le label '1' : {taux_femmes_label_1}")
+
+
+# Matrices par genre
+
+ab=joblib.load('AdaBoost_BestModel_08151.joblib')
+
+X_test['PINCP'] = y_test['PINCP']
+hommes_X_test = X_test[X_test['SEX'] == 1]
+femmes_X_test = X_test[X_test['SEX'] == 2]
+
+predictions_h = ab.predict(hommes_X_test.drop(columns=['PINCP']))
+predictionsh = predictions_h.astype(int)
+
+matrix=confusion_matrix(predictionsh,hommes_X_test['PINCP'])
+disp = ConfusionMatrixDisplay(confusion_matrix=matrix)
+disp.plot()
+plt.title("Confusion matrix AdaBoost on Men")
+plt.show()
+
+
+predictions_f = ab.predict(femmes_X_test.drop(columns=['PINCP']))
+predictionsf = predictions_f.astype(int)
+
+matrix=confusion_matrix(predictionsf,femmes_X_test['PINCP'])
+disp = ConfusionMatrixDisplay(confusion_matrix=matrix)
+disp.plot()
+plt.title("Confusion matrix AdaBoost on Women")
+plt.show()
