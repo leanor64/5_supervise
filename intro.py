@@ -67,12 +67,12 @@ df_lab = pd.read_csv(file_labels)
 # plt.show()
 
 # Répartition des niveaux d'éducation
-values, counts = np.unique(df_feat['SCHL'],return_counts=True)
-plt.bar(values, counts, align='center', alpha=0.7, color='skyblue', edgecolor='black')
-plt.title("Class of educational attainment Distribution")
-plt.xlabel("Class of educational attainment Ranges")
-plt.ylabel("Frequency")
-plt.show()
+# values, counts = np.unique(df_feat['SCHL'],return_counts=True)
+# plt.bar(values, counts, align='center', alpha=0.7, color='skyblue', edgecolor='black')
+# plt.title("Class of educational attainment Distribution")
+# plt.xlabel("Class of educational attainment Ranges")
+# plt.ylabel("Frequency")
+# plt.show()
 
 
 # SPLIT TRAIN TEST part
@@ -182,4 +182,27 @@ labels = df_lab['PINCP'].map({'True':1.0, 'False':0.0})
 
 # TODO : Temps d'exécution pour Stacking
 
+# AdaBoost sans colonne de genre
+# columns = df_feat.columns
+# X_train_scaled = pd.DataFrame(X_train_scaled, columns=columns)
+# X_test_scaled = pd.DataFrame(X_test_scaled, columns=columns)
+
+# X_train_scaled = X_train_scaled.drop(columns=['SEX'])
+# X_test_scaled = X_test_scaled.drop(columns=['SEX'])
+
+# abc=AdaBoostClassifier()
+# abc.fit(X_train_scaled,y_train)
+# cv_score = cross_val_score(abc, X_train_scaled, y_train, cv=5)
+# y_pred=abc.predict(X_test_scaled)
+
+# print(f"\nCross-Validation score AdaBoost without 'SEX' column: {np.mean(cv_score)}")
+# accuracy = accuracy_score(y_test,y_pred)
+# print(f"Accuracy AdaBoost : {accuracy}")
+# creport = classification_report(y_test,y_pred)
+# print(f"Classification AdaBoost :\n {creport}")
+# matrix=confusion_matrix(y_test,y_pred)
+# disp = ConfusionMatrixDisplay(confusion_matrix=matrix)
+# disp.plot()
+# plt.title("Confusion matrix for AdaBoost without 'SEX' column")
+# plt.show()
 

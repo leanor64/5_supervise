@@ -22,12 +22,12 @@ df_lab = pd.read_csv(file_labels)
 X_train, X_test, y_train, y_test = train_test_split(df_feat, df_lab, test_size=0.4, random_state=13)
 
 # Preparation des donnees
-sc = StandardScaler()
-sc = joblib.load('scaler.joblib')
-X_train_scaled = sc.transform(X_train)
-X_test_scaled = sc.transform(X_test)
+# sc = StandardScaler()
+# sc = joblib.load('scaler.joblib')
+# X_train_scaled = sc.transform(X_train)
+# X_test_scaled = sc.transform(X_test)
 
-labels = df_lab['PINCP'].map({'True':1.0, 'False':0.0})
+# labels = df_lab['PINCP'].map({'True':1.0, 'False':0.0})
 
 
 # Amélioration des modèles (3.2)
@@ -191,24 +191,41 @@ print(f"Taux de femmes ayant le label '1' : {taux_femmes_label_1}")
 
 ab=joblib.load('AdaBoost_BestModel_08151.joblib')
 
-X_test['PINCP'] = y_test['PINCP']
-hommes_X_test = X_test[X_test['SEX'] == 1]
-femmes_X_test = X_test[X_test['SEX'] == 2]
+X_test['PINCP'] = y_test['PINCP'].astype(int)
+print(f"Xtest :{X_test} ")
+X1 = X_test.copy()
+print(f"X1 :{X1} ")
+X2 = X_test.copy()
+hommes_X_test = X1[X1['SEX'] == 1]
+femmes_X_test = X2[X2['SEX'] == 2]
 
-predictions_h = ab.predict(hommes_X_test.drop(columns=['PINCP']))
+y_test_h = hommes_X_test['PINCP']
+y_test_f = femmes_X_test['PINCP']
+hommes_X_test = hommes_X_test.drop(columns=['PINCP'])
+femmes_X_test = femmes_X_test.drop(columns=['PINCP'])
+
+print(f"hommes :{hommes_X_test} ")
+
+# Preparation des donnees
+sc = joblib.load('scaler.joblib')
+hommes_X_test_scaled = sc.transform(hommes_X_test)
+femmes_X_test_scaled = sc.transform(femmes_X_test)
+
+
+predictions_h = ab.predict(hommes_X_test_scaled)
 predictionsh = predictions_h.astype(int)
 
-matrix=confusion_matrix(predictionsh,hommes_X_test['PINCP'])
+matrix=confusion_matrix(predictionsh,y_test_h)
 disp = ConfusionMatrixDisplay(confusion_matrix=matrix)
 disp.plot()
 plt.title("Confusion matrix AdaBoost on Men")
 plt.show()
 
 
-predictions_f = ab.predict(femmes_X_test.drop(columns=['PINCP']))
+predictions_f = ab.predict(femmes_X_test_scaled)
 predictionsf = predictions_f.astype(int)
 
-matrix=confusion_matrix(predictionsf,femmes_X_test['PINCP'])
+matrix=confusion_matrix(predictionsf,y_test_f)
 disp = ConfusionMatrixDisplay(confusion_matrix=matrix)
 disp.plot()
 plt.title("Confusion matrix AdaBoost on Women")
